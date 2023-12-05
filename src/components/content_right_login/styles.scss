@@ -1,0 +1,37 @@
+.content_right_mid {
+  height: 64px;
+  box-sizing: border-box;
+  display: flex;
+  border: 1px solid #dbdbdb;
+  text-align: center;
+  align-items: center;
+  justify-self: center;
+  margin: 16px 0;
+  .content_right_mid_title {
+    font-size: 14px;
+    text-align: center;
+    width: 100%;
+    .content_right_mid_subcribe {
+      color: #0095f6;
+      font-weight: 500;
+    }
+  }
+}
+.content_right_mid_dowload_title {
+  font-size: 14px;
+  width: 100%;
+  text-align: center;
+  margin: 12px 0;
+}
+.content_right_bottom {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .google {
+    height: 40px;
+    margin: 0 6px;
+  }
+  .microsoft {
+    height: 40px;
+  }
+}

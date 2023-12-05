@@ -1,0 +1,55 @@
+.top {
+  height: 400px;
+  box-sizing: border-box;
+  border: 1px solid #dbdbdb;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 0;
+  .form_login {
+    padding: 0 28px;
+    font-size: 16px;
+    .ant-select-selection__placeholder {
+      color: #992323;
+    }
+  }
+  .logo {
+    background-image: url('https://static.cdninstagram.com/rsrc.php/v3/yx/r/WtxJZZ3-9ZP.png');
+    background-position: 0px 0px;
+    background-size: 176px 186px;
+    width: 174px;
+    height: 50px;
+    background-repeat: no-repeat;
+    display: inline-block;
+    margin-top: 18px;
+    margin-bottom: 18px;
+  }
+}
+.or {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #737373;
+  padding: 0 28px;
+  margin-bottom: 20px;
+  .street {
+    width: 100%;
+    height: 1px;
+    background-color: #dbdbdb;
+  }
+  p {
+    padding: 0 18px;
+  }
+}
+.orther_login {
+  font-size: 14px;
+  color: #385185;
+  font-weight: 500;
+  margin: 20px 0;
+}
+.forgot_pass {
+  font-size: 12px;
+  color: #00376b;
+  margin-top: 16px;
+}
