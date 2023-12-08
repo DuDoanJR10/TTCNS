@@ -1,0 +1,13 @@
+.Sidebar {
+  &__logo {
+    font-family: 'Kaushan Script', cursive;
+  }
+}
+
+.menu-home-instagram {
+  .ant-menu-title-content {
+    display: inline-flex;
+    width: 100%;
+    height: 100%;
+  }
+}

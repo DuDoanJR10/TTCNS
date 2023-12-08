@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import 'normalize.css';
+
+html {
+  // font-size: 62.5%;
+  font-family: 'Barlow Condensed', sans-serif !important;
+}
+
+body {
+  // font-size: 1.6rem;
+  text-rendering: optimizeSpeed; // Tối ưu hiển thị font nhanh nhất
+}
+
+.container {
+  width: 100%;
+  padding: 0 20px;
+}
+
+.ant-btn {
+  height: auto;
+}
+
+@layer components {
+  .heading {
+    @apply my-5 leading-normal text-3xl font-bold;
+  } 
+  .button-create {
+    @apply mb-5;
+  }
+}
