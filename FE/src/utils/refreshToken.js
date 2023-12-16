@@ -1,12 +1,17 @@
 import axios from "axios";
-import { getCookie } from "../helpers/funcs";
 
 const refreshToken = async () => {
     try {
-        const res = await axios.post('http://localhost:8000/v1/auth/refresh', { refreshToken: getCookie(process.env.REACT_APP_REFRESH_TOKEN_KEY) })
+        const res = await axios.post(`${process.env.REACT_APP_URL_API}/v1/auth/refresh`, null, {
+            withCredentials: true
+        });
         return res.data;
     } catch (error) {
-        console.log(error)
+        console.log('Error: ', error);
+        if (error.response.status === 401) {
+            return error.response.data;
+        }
+        return error
     }
 }
 

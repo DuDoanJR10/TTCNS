@@ -3,13 +3,13 @@ import '../styles/Login.scss';
 import { Button, Form, Input, Radio } from 'antd';
 import showMessage from '../../../hooks/message-hooks';
 import { login } from '../api';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { loginFailed, loginStart, loginSuccess } from '../store/authSlice';
-import { saveCookie } from '../../../helpers/funcs';
 
 const Login = ({ showModalRegister, handleCancel }) => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
+  const loading = useSelector(state => state.auth.login.loading)
 
   const onFinish = async (values) => {
     const user = {
@@ -25,8 +25,6 @@ const Login = ({ showModalRegister, handleCancel }) => {
         form.resetFields();
         dispatch(loginSuccess(data?.user));
         showMessage().showSuccess(data?.message);
-        saveCookie(process.env.REACT_APP_ACCESS_TOKEN_KEY, data?.user?.accessToken);
-        saveCookie(process.env.REACT_APP_REFRESH_TOKEN_KEY, data?.refreshToken);
       } else {
         dispatch(loginFailed());
         showMessage().showError(data.message);
@@ -37,7 +35,7 @@ const Login = ({ showModalRegister, handleCancel }) => {
   };
   return (
     <div className="Login">
-      <h2 className="Login__title text-center text-4xl leading-normal font-bold">
+      <h2 className="Login__title text-primary text-center text-4xl leading-normal font-bold">
         Đăng nhập
       </h2>
       <Form
@@ -74,11 +72,12 @@ const Login = ({ showModalRegister, handleCancel }) => {
         >
           Bạn chưa có tài khoản? Đăng ký ngay!
         </Button>
-        <Form.Item>
+        <Form.Item className='m-0'>
           <Button
-            className="m-auto flex text-black"
+            className="m-auto w-full flex text-black items-center text-xl justify-center min-w-[140px] font-semibold"
             type="primary"
             htmlType="submit"
+            loading={loading}
           >
             Đăng nhập
           </Button>

@@ -7,36 +7,88 @@ import {
   FaCircleUser,
   FaDatabase,
   FaLayerGroup,
+  FaHotel,
+  FaUserGroup
 } from 'react-icons/fa6';
 
-const menuTop = [
+const menuAdmin = [
   {
     key: 0,
-    label: <Link to='/'>Trang chủ</Link>,
-    icon: <FaHouse />,
+    label: <Link to="/">Trang chủ</Link>,
+    icon: (
+      <div className="Sidebar__icon">
+        <FaHouse className="icon-menu" />
+      </div>
+    ),
   },
   {
     key: 1,
-    label: <Link to='/category'>Danh mục</Link>,
-    icon: <FaLayerGroup />,
+    label: <Link to="/category">Danh mục</Link>,
+    icon: (
+      <div className="Sidebar__icon">
+        <FaLayerGroup className="icon-menu" />
+      </div>
+    ),
   },
   {
     key: 2,
-    label: <Link to='/supplies'>Vật tư và thiết bị</Link>,
-    icon: <FaDatabase />,
+    label: <Link to="/supplies">Vật tư và thiết bị</Link>,
+    icon: (
+      <div className="Sidebar__icon">
+        <FaDatabase className="icon-menu" />
+      </div>
+    ),
   },
   {
     key: 3,
     label: <Link to="/account">Tài khoản</Link>,
-    icon: <FaCircleUser />,
+    icon: (
+      <div className="Sidebar__icon">
+        <FaCircleUser className="icon-menu" />
+      </div>
+    ),
+  },
+  {
+    key: 4,
+    label: <Link to="/staff">Nhân viên</Link>,
+    icon: (
+      <div className="Sidebar__icon">
+        <FaUserGroup className="icon-menu" />
+      </div>
+    ),
+  },
+  {
+    key: 5,
+    label: <Link to="/room">Phòng ban</Link>,
+    icon: (
+      <div className="Sidebar__icon">
+        <FaHotel className="icon-menu" />
+      </div>
+    ),
   },
 ];
 
-const redirectLinks = ['/', '/category', '/supplies', '/account'];
+const menuUser = [
+  {
+    key: 0,
+    label: <Link to="/">Trang chủ</Link>,
+    icon: (
+      <div className="Sidebar__icon">
+        <FaHouse className="icon-menu" />
+      </div>
+    ),
+  },
+];
 
-const SidebarComponent = ({ className }) => {
+const redirectLinks = ['/', '/category', '/supplies', '/account', '/staff', '/room'];
+
+const SidebarComponent = ({ className, admin }) => {
   const location = useLocation();
-  const [active, setActive] = useState(redirectLinks.findIndex((link) => link === location.pathname).toString());
+  const [active, setActive] = useState(
+    redirectLinks.findIndex((link) => link === location.pathname).toString(),
+  );
+
+  const menuSidebar = admin === 'admin' ? menuAdmin : menuUser;
 
   useEffect(() => {
     setActive(
@@ -46,19 +98,19 @@ const SidebarComponent = ({ className }) => {
 
   return (
     <div
-      className={`${className} Sidebar shrink-0 min-h-screen bg-[#a5f3fc] text-white w-[245px]`}
+      className={`${className} Sidebar bg-second fixed shrink-0 overflow-auto h-screen text-white w-[245px]`}
     >
-      <div className="flex min-h-screen w-full flex-col justify-between h-full">
-        <div className="min-h-screen h-full">
-          <Link to="/" className="block">
-            <p className="Sidebar__logo text-black ml-5 text-3xl leading-[44px] py-2">
+      <div className="flex w-full flex-col justify-between h-full">
+        <div className="h-fit">
+          <Link to="/" className="block bg-second">
+            <p className="Sidebar__logo border-b-4 border-white bg-second text-third my-0 mx-3 pl-[18px] text-3xl leading-[44px] py-2">
               Hồng Ngọc
             </p>
           </Link>
           <Menu
-            className="min-h-screen h-full bg-[#a5f3fc]"
+            className="h-fit bg-second px-3 py-5"
             mode="vertical"
-            items={menuTop}
+            items={menuSidebar}
             selectedKeys={active}
           />
         </div>

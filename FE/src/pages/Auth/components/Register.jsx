@@ -3,20 +3,26 @@ import '../styles/Register.scss';
 import { Button, Input, Form, Radio } from 'antd';
 import showMessage from '../../../hooks/message-hooks';
 import { register } from '../api';
-import { useDispatch } from 'react-redux';
-import { registerFailed, registerStart, registerSuccess } from '../store/authSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  registerFailed,
+  registerStart,
+  registerSuccess,
+} from '../store/authSlice';
 
 const { TextArea } = Input;
 
 const Register = ({ showModalLogin, handleCancel }) => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const [form] = Form.useForm();
+  const loading = useSelector((state) => state.auth.register.loading);
   const onFinish = async (values) => {
     const newUser = {
       ...values,
-      username: values.username.trim(),
-      password: values.password.trim(),
-      address: values.address.trim(),
+      username: values.username?.trim(),
+      password: values.password?.trim(),
+      address: values.address?.trim(),
+      role: "user"
     };
     dispatch(registerStart());
     try {
@@ -36,7 +42,7 @@ const Register = ({ showModalLogin, handleCancel }) => {
   };
 
   const validatorWhiteSpace = (rule, value, callback) => {
-    if (value && value.trim() === '') {
+    if (value && value?.trim() === '') {
       callback('Vui lòng nhập tên người dùng hợp lệ không có dấu cách ở đầu!');
     } else {
       callback();
@@ -44,7 +50,7 @@ const Register = ({ showModalLogin, handleCancel }) => {
   };
   return (
     <div className="Register">
-      <h2 className="Register__title text-center text-4xl leading-normal font-bold">
+      <h2 className="Register__title text-primary text-center text-4xl leading-normal font-bold">
         Đăng ký
       </h2>
       <Form
@@ -52,6 +58,7 @@ const Register = ({ showModalLogin, handleCancel }) => {
         name="register-form"
         layout="vertical"
         onFinish={onFinish}
+        form={form}
       >
         <Form.Item
           name="username"
@@ -77,6 +84,32 @@ const Register = ({ showModalLogin, handleCancel }) => {
         >
           <Input.Password />
         </Form.Item>
+
+        <Form.Item
+          name="confirm"
+          label="Xác nhận mật khẩu"
+          dependencies={['password']}
+          hasFeedback
+          rules={[
+            {
+              required: true,
+              message: 'Vui lòng xác nhận lại mật khẩu!',
+            },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                if (!value || getFieldValue('password') === value) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(
+                  new Error('Mật khẩu mới bạn nhập không khớp!'),
+                );
+              },
+            }),
+          ]}
+        >
+          <Input.Password />
+        </Form.Item>
+
         <Form.Item
           name="address"
           label="Địa chỉ"
@@ -103,12 +136,6 @@ const Register = ({ showModalLogin, handleCancel }) => {
         >
           <Input />
         </Form.Item>
-        <Form.Item name="role" initialValue="user">
-          <Radio.Group defaultValue="user" size="large">
-            <Radio.Button value="user">Người dùng</Radio.Button>
-            <Radio.Button value="admin">Người quản trị</Radio.Button>
-          </Radio.Group>
-        </Form.Item>
         <Button
           className="block px-0 mb-2"
           type="link"
@@ -116,11 +143,12 @@ const Register = ({ showModalLogin, handleCancel }) => {
         >
           Bạn đã có tài khoản? Đăng nhập ngay!
         </Button>
-        <Form.Item>
+        <Form.Item className='m-0'>
           <Button
-            className="m-auto flex text-black"
+            className="m-auto w-full flex text-black items-center text-xl justify-center min-w-[140px] font-semibold"
             type="primary"
             htmlType="submit"
+            loading={loading}
           >
             Đăng ký
           </Button>

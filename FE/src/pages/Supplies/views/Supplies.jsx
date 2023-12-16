@@ -1,95 +1,191 @@
-import React from 'react'
-import { Space, Table, Button } from 'antd';
-
-const handleDelete = () => { }
-const handleEdit = () => { }
-
-const columns = [
-  {
-    title: 'STT',
-    dataIndex: 'key',
-    rowScope: 'row',
-  },
-  {
-    title: 'ID',
-    dataIndex: 'id',
-    key: 'id',
-  },
-  {
-    title: 'Tên đăng nhập',
-    dataIndex: 'username',
-    key: 'username',
-    render: (text) => <span>{text}</span>,
-  },
-  {
-    title: 'Mật khẩu',
-    dataIndex: 'password',
-    key: 'password',
-    render: (text) => <span>{text}</span>,
-  },
-  {
-    title: 'Địa chỉ',
-    dataIndex: 'address',
-    key: 'address',
-  },
-  {
-    title: 'Số điện thoại',
-    key: 'phone',
-    dataIndex: 'phone',
-    render: (text) => <span>{text}</span>,
-  },
-  {
-    title: 'Hành động',
-    key: 'action',
-    render: (_, record) => (
-      <Space size="middle">
-        <Button onClick={handleEdit}>Sửa</Button>
-        <Button onClick={handleDelete} danger>Xóa</Button>
-      </Space>
-    ),
-  },
-];
-
-const data = [
-  {
-    key: '1',
-    id: '1234abcd',
-    username: 'John Brown',
-    password: 'Brown@123',
-    address: 'New York',
-    phone: '0388998283',
-  },
-  {
-    key: '2',
-    id: '9543abcd',
-    username: 'Jim Green',
-    password: 'Green@123',
-    address: 'London',
-    phone: '0388998283',
-  },
-  {
-    key: '3',
-    id: '1234degf',
-    username: 'Joe Black',
-    password: 'Black@123',
-    address: 'Sydney',
-    phone: '0388998283',
-  },
-];
+import React, { useEffect } from 'react';
+import { Space, Table, Button, Popconfirm } from 'antd';
+import TextDisplay from '../../../components/TextDisplay';
+import ModalAdd from '../components/ModalAdd';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  setListSupplies,
+  setLoading,
+  setModalAdd,
+  setModalUpdate,
+} from '../store/suppliesSlice';
+import { deleteSupplies, getListSupplies } from '../api';
+import showMessage from '../../../hooks/message-hooks';
+import ModalUpdate from '../components/ModalUpdate';
+import createAxios from '../../../utils/createAxios';
+import { loginSuccess } from '../../Auth/store/authSlice';
 
 const Supplies = () => {
-  const handleCreate = () => { }
+  const dispatch = useDispatch();
+  let listSupplies = useSelector((state) => state.supplies?.listSupplies);
+  const loading = useSelector((state) => state.supplies?.loading);
+  const user = useSelector((state) => state.auth.login?.currentUser);
+  const axiosJWT = createAxios(user, dispatch, loginSuccess);
+  const handleCreate = () => {
+    dispatch(setModalAdd({ open: true }));
+  };
+  useEffect(() => {
+    dispatch(setLoading(true));
+    getListSupplies().then((res) => {
+      dispatch(setLoading(false));
+      if (res.data?.success) {
+        dispatch(setListSupplies(res.data?.listSupplies));
+      } else {
+        console.log(res.data?.error);
+        showMessage().showError(res.data?.message);
+      }
+    });
+  }, [dispatch]);
+
+  const handleDelete = (id) => {
+    dispatch(setLoading(true));
+    deleteSupplies(id, axiosJWT, user?.accessToken).then((res) => {
+      dispatch(setLoading(false));
+      if (res.data?.success) {
+        dispatch(setListSupplies(res.data?.listSupplies));
+        showMessage().showSuccess(res.data?.message);
+      } else {
+        console.log(res.data?.error);
+        showMessage().showError(res.data?.message);
+      }
+    });
+  };
+  const handleEdit = (record) => {
+    dispatch(
+      setModalUpdate({
+        open: true,
+        id: record?._id,
+        category: record?.idCategory,
+        description: record?.description,
+        quantity: record?.quantity,
+        brand: record?.brand,
+        color: record?.color,
+        size: record?.size,
+        name: record?.name,
+        image: record?.image,
+      }),
+    );
+  };
+
+  const columns = [
+    {
+      title: 'STT',
+      dataIndex: 'key',
+      rowScope: 'row',
+    },
+    {
+      title: 'ID',
+      dataIndex: '_id',
+      key: '_id',
+      render: (text) => <TextDisplay text={text} />,
+    },
+    {
+      title: 'Tên vật tư',
+      dataIndex: 'name',
+      key: 'name',
+      render: (text) => <TextDisplay text={text} />,
+    },
+    {
+      title: 'Mô tả',
+      dataIndex: 'description',
+      key: 'description',
+      render: (text) => <TextDisplay text={text} />,
+    },
+    {
+      title: 'Số lượng',
+      dataIndex: 'quantity',
+      key: 'quantity',
+      render: (text) => <TextDisplay text={text} />,
+    },
+    {
+      title: 'Thương hiệu',
+      key: 'brand',
+      dataIndex: 'brand',
+      render: (text) => <TextDisplay text={text} />,
+    },
+    {
+      title: 'Màu sắc',
+      key: 'color',
+      dataIndex: 'color',
+      render: (text) => <TextDisplay text={text} />,
+    },
+    {
+      title: 'Kích thước',
+      key: 'size',
+      dataIndex: 'size',
+      render: (text) => <TextDisplay text={text} />,
+    },
+    {
+      title: 'Danh mục',
+      key: 'category',
+      dataIndex: 'category',
+      render: (text) => <TextDisplay text={text} />,
+    },
+    {
+      title: 'Ảnh',
+      key: 'image',
+      dataIndex: 'image',
+      render: (url) => {
+        if (url) {
+          return (
+            <img
+              className="h-[50px] w-[50px]"
+              src={`${process.env.REACT_APP_URL_API}/${url}`}
+              alt="avatar"
+            />
+          );
+        } else {
+          return 'N/A';
+        }
+      },
+    },
+    {
+      title: 'Hành động',
+      key: 'action',
+      render: (_, record) => (
+        <Space size="middle">
+          <Button onClick={() => handleEdit(record)}>Sửa</Button>
+          <Popconfirm
+            title="Bạn có chắc chắn muốn xóa không?"
+            okText="Có"
+            cancelText="Hủy"
+            onConfirm={() => handleDelete(record._id)}
+          >
+            <Button danger>Xóa</Button>
+          </Popconfirm>
+        </Space>
+      ),
+    },
+  ];
+  if (listSupplies) {
+    listSupplies = listSupplies.map((supplies, index) => {
+      return {
+        ...supplies,
+        key: index + 1,
+        category: supplies?.category?.name,
+        idCategory: supplies?.category?._id,
+      };
+    });
+  }
   return (
-    <div className='Supplies'>
+    <div className="Supplies">
       <div className="container">
-        <h1 className="heading">Vật tư và thiết bị</h1>
-        <Button className='button-create' onClick={handleCreate}>Tạo</Button>
+        <h1 className="heading box-shadow">Vật tư và thiết bị</h1>
+        <Button type='primary' className="button-create box-shadow" onClick={handleCreate}>
+          Tạo
+        </Button>
         <div className="Supplies__table">
-          <Table columns={columns} dataSource={data} />
+          <Table
+            loading={loading}
+            columns={columns}
+            dataSource={listSupplies}
+          />
         </div>
+        <ModalAdd />
+        <ModalUpdate />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Supplies
+export default Supplies;

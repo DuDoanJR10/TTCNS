@@ -1,6 +1,6 @@
 const argon2 = require('argon2');
 const User = require('../models/User');
-const createToken = require('../../utils/createToken')
+const createToken = require('../../utils/createToken');
 const jwt = require("jsonwebtoken");
 
 const authController = {
@@ -22,11 +22,9 @@ const authController = {
                     message: 'Tên đăng nhập đã tồn tại!'
                 })
             }
-
-            const hashedPassword = await argon2.hash(password);
             const newUser = new User({
                 username,
-                password: hashedPassword,
+                password,
                 phone,
                 address,
                 role
@@ -62,7 +60,7 @@ const authController = {
                 })
             }
 
-            const passwordValid = await argon2.verify(user.password, password);
+            const passwordValid = user.password === password;
             if (!passwordValid) {
                 return res.status(401).json({
                     success: false,
@@ -79,6 +77,14 @@ const authController = {
 
             const accessToken = createToken.generateAccessToken(user);
             const refreshToken = createToken.generateRefreshToken(user);
+
+            res.cookie("refreshToken", refreshToken, {
+                httpOnly: true,
+                secure: false,
+                path: '/',
+                sameSite: "strict"
+            })
+
             return res.status(200).json({
                 success: true,
                 message: 'Đăng nhập thành công!',
@@ -88,7 +94,8 @@ const authController = {
                     phone: user.phone,
                     address: user.address,
                     role: user.role,
-                    accessToken
+                    accessToken,
+                    refreshToken
                 },
                 refreshToken
             })
@@ -100,10 +107,47 @@ const authController = {
             })
         }
     },
+    refreshToken: async (req, res) => {
+        try {
+            const refreshToken = req.cookies.refreshToken;
+            if (!refreshToken) return res.status(401).json("You're not authenticated tại refreshToken!");
+            jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET_KEY,
+                (err, user) => {
+                    if (err) {
+                        console.log('Logout');
+                        return res.status(401).json({
+                            success: false,
+                            message: 'Vui lòng đăng nhập lại!',
+                        });
+                    } else {
+                        const newAccessToken = createToken.generateAccessToken(user);
+                        const newRefreshToken = createToken.generateRefreshToken(user);
+                        res.cookie("refreshToken", newRefreshToken, {
+                            httpOnly: true,
+                            secure: false,
+                            path: '/',
+                            sameSite: "strict" // Prevent attack CSRF 
+                        })
+                        return res.status(200).json({ accessToken: newAccessToken });
+                    }
+                }
+            )
+        } catch (error) {
+            return res.status(500).json({
+                status: false,
+                message: error.response.data
+            });
+        }
+    },
     // [LOGOUT]: /v1/auth/logout
     logout: async (req, res) => {
-        console.log('req.headers.token in logout: ', req.headers.token);
         try {
+            res.clearCookie("refreshToken", {
+                httpOnly: true,
+                secure: true,
+                path: '/',
+                sameSite: "strict" // Prevent attack CSRF 
+            });
             return res.status(200).json({
                 success: true,
                 message: 'Đăng xuất thành công!'
@@ -114,27 +158,6 @@ const authController = {
                 success: false,
                 message: 'Có lỗi xảy ra, xin vui lòng thử lại!'
             })
-        }
-    },
-    requestRefreshToken: async (req, res) => {
-        try {
-            const refreshToken = req.body.refreshToken;
-            console.log('refreshToken: ', refreshToken);
-            if (!refreshToken) return res.status(401).json("You're not authenticated tại refreshToken!");
-            jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET,
-                (err, user) => {
-                    if (err) {
-                        console.log('Logout');
-                        return res.status(401).json(null);
-                    } else {
-                        const newAccessToken = createToken.generateAccessToken(user);
-                        const newRefreshToken = createToken.generateRefreshToken(user);
-                        return res.status(200).json({ accessToken: newAccessToken, refreshToken: newRefreshToken });
-                    }
-                }
-            )
-        } catch (err) {
-            return res.status(500).json(err);
         }
     },
 }

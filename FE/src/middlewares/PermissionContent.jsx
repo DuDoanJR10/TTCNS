@@ -1,16 +1,11 @@
 import { Spin, Layout } from 'antd';
-import routes from '../routes/routes';
 import React, { Suspense } from 'react';
-import { Route, Navigate, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
 const { Content } = Layout;
 
-const PermissionContent = () => {
-  let access = true;
-
-  // Check permissions
-
-  return access ? (
+const PermissionContent = ({ routes }) => {
+  return (
     <Routes>
       {routes.map((route, idx) => {
         return (
@@ -20,7 +15,7 @@ const PermissionContent = () => {
               path={route.path}
               element={
                 <Suspense fallback={<Spin />}>
-                  <Content className='bg-white'>
+                  <Content className="bg-white mt-[60px] overflow-auto ml-[245px]">
                     <route.element />
                   </Content>
                 </Suspense>
@@ -30,8 +25,6 @@ const PermissionContent = () => {
         );
       })}
     </Routes>
-  ) : (
-    <Navigate to="/" />
   );
 };
 
