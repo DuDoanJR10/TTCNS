@@ -7,10 +7,6 @@ const Export = new Schema({
         required: true,
         unique: true,
     },
-    date: {
-        type: String,
-        required: true,
-    },
     staff: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Staff",
@@ -34,6 +30,7 @@ const Export = new Schema({
             }
         }
     ]
-})
+}, { timestamps: true }
+)
 
 module.exports = mongoose.model('Export', Export);

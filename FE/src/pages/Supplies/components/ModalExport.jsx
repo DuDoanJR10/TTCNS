@@ -9,13 +9,7 @@ import {
   Space,
   Table,
 } from 'antd';
-import React, {
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { exportSupplies, getListSupplies } from '../api';
 import { useDispatch, useSelector } from 'react-redux';
 import { setExportSupplies, setListSupplies } from '../store/suppliesSlice';
@@ -139,7 +133,12 @@ const EditableCell = ({
                     supplies?._id?.toString() ===
                     getFieldValue('name')?.toString(),
                 );
-                if (value > supplies?.quantity && supplies) {
+                if (supplies?.quantity === 0) {
+                  setFieldValue('quantity', 0);
+                  return Promise.reject(
+                    new Error('Hết vật tư!')
+                  )
+                } else if (value > supplies?.quantity && supplies) {
                   setFieldValue('quantity', supplies?.quantity);
                   return Promise.reject(
                     new Error(
@@ -269,6 +268,7 @@ const ModalExport = ({ open, handleClose }) => {
   const handleCancel = () => {
     handleClose();
     setCount(0);
+    form.resetFields();
     setDataSource([]);
     dispatch(setExportSupplies([]));
   };
@@ -284,7 +284,7 @@ const ModalExport = ({ open, handleClose }) => {
     );
     setListStaffSelected(listStaffSelectedByRoom);
   };
-  
+
   const validatorWhiteSpace = (rule, value, callback) => {
     if (value && value?.trim() === '') {
       callback('Vui lòng nhập tên phiếu xuất hợp lệ không có dấu cách ở đầu!');
@@ -297,19 +297,24 @@ const ModalExport = ({ open, handleClose }) => {
     if (listSuppliesExport.length !== 0) {
       const listExport = listSuppliesExport
         .filter((item) => item.name)
+        .filter(item => item.quantity)
         .map((item, index) => ({ ...item, key: index }));
+      if (listExport.length === 0) {
+        showMessage().showError('Vui lòng nhập thông tin vật tư!')
+        return false;
+      }
       const dataExport = {
         supplies: listExport,
         name: values?.name,
         room: values?.room,
         staff: values?.staff,
-        date: new Date().toLocaleDateString('en-GB')
-      }
+      };
       setLoading(true);
-      exportSupplies(dataExport, axiosJWT, user?.accessToken).then(res => {
+      exportSupplies(dataExport, axiosJWT, user?.accessToken).then((res) => {
         setLoading(false);
         if (res.data.success) {
           handleCancel();
+          form.resetFields();
           getListSupplies().then((res) => {
             if (res.data?.success) {
               dispatch(setListSupplies(res.data?.listSupplies));
@@ -322,7 +327,7 @@ const ModalExport = ({ open, handleClose }) => {
           console.log(res.data?.error);
           showMessage().showError(res.data?.message);
         }
-      })
+      });
     } else {
       showMessage().showError('Vui lòng nhập thông tin vật tư!');
     }

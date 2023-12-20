@@ -7,10 +7,6 @@ const Import = new Schema({
         required: true,
         unique: true,
     },
-    date: {
-        type: String,
-        required: true,
-    },
     supplies: [
         {
             name: {
@@ -25,6 +21,7 @@ const Import = new Schema({
             }
         }
     ]
-})
+}, { timestamps: true }
+)
 
 module.exports = mongoose.model('Import', Import);

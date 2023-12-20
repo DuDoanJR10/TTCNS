@@ -28,7 +28,7 @@ const persistConfig = {
 const suppliesPersistConfig = {
     key: 'supplies',
     storage: storage,
-    blacklist: ['modalAdd', 'modalUpdate', 'modalView', 'listSuppliesExport']
+    blacklist: ['modalAdd', 'modalUpdate', 'modalView', 'listSuppliesExport', 'listSuppliesImport']
 }
 
 const categoryPersistConfig = {

@@ -15,10 +15,12 @@ import ModalUpdate from '../components/ModalUpdate';
 import createAxios from '../../../utils/createAxios';
 import { loginSuccess } from '../../Auth/store/authSlice';
 import ModalExport from '../components/ModalExport';
+import ModalImport from '../components/ModalImport';
 
 const Supplies = () => {
   const dispatch = useDispatch();
   const [openExport, setOpenExport] = useState(false);
+  const [openImport, setOpenImport] = useState(false);
   let listSupplies = useSelector((state) => state.supplies?.listSupplies);
   const loading = useSelector((state) => state.supplies?.loading);
   const user = useSelector((state) => state.auth.login?.currentUser);
@@ -72,13 +74,13 @@ const Supplies = () => {
     );
   };
 
-  const handleExport = () => {
-    setOpenExport(true);
-  };
+  const handleExport = () => setOpenExport(true);
 
-  const handleClose = () => {
-    setOpenExport(false);
-  };
+  const handleImport = () => setOpenImport(true);
+
+  const handleCloseExport = () => setOpenExport(false);
+
+  const handleCloseImport = () => setOpenImport(false);
 
   const columns = [
     {
@@ -170,7 +172,7 @@ const Supplies = () => {
       ),
     },
   ];
-  
+
   if (listSupplies) {
     listSupplies = listSupplies.map((supplies, index) => {
       return {
@@ -200,6 +202,13 @@ const Supplies = () => {
           >
             Xuất
           </Button>
+          <Button
+            type="primary"
+            className="button-create box-shadow border-[3px] border-primary hover:!bg-white hover:!text-primary"
+            onClick={handleImport}
+          >
+            Nhập
+          </Button>
         </Space>
         <div className="Supplies__table">
           <Table
@@ -211,7 +220,8 @@ const Supplies = () => {
         </div>
         <ModalAdd />
         <ModalUpdate />
-        <ModalExport open={openExport} handleClose={handleClose} />
+        <ModalExport open={openExport} handleClose={handleCloseExport} />
+        <ModalImport open={openImport} handleClose={handleCloseImport} />
       </div>
     </div>
   );

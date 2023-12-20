@@ -1,6 +1,7 @@
 const Supplies = require('../models/Supplies');
 const Category = require('../models/Category');
 const Export = require('../models/Export');
+const Import = require('../models/Import');
 
 const suppliesController = {
     // [GET]: /v1/api/supplies/get-all
@@ -121,8 +122,8 @@ const suppliesController = {
     // [POST]: /v1/api/supplies/export
     async exportSupplies(req, res) {
         try {
-            const { supplies, name, room, staff, date } = req.body || {};
-            console.log(supplies, name, room, staff, date);
+            const { supplies, name, room, staff } = req.body || {};
+            console.log(supplies, name, room, staff);
             const newExport = new Export(req.body);
             supplies.map(async (supply) => {
                 const supplyCurrent = await Supplies.findOne({ _id: supply.name });
@@ -138,6 +139,54 @@ const suppliesController = {
             return res.status(200).json({
                 success: true,
                 message: 'Xuất thành công!',
+            })
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({
+                success: false,
+                message: 'Có lỗi xảy ra, vui lòng thử lại!',
+                error
+            })
+        }
+    },
+    // [GET]: /v1/api/supplies/get-all-import
+    async getAllImport(req, res) {
+        try {
+            const listImport = await Import.find({});
+            return res.status(200).json({
+                success: true,
+                message: "",
+                listImport
+            })
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({
+                success: false,
+                message: 'Có lỗi xảy ra, vui lòng thử lại!',
+                error
+            })
+        }
+    },  
+    // [POST]: /v1/api/supplies/import
+    async importSupplies(req, res) {
+        try {
+            const { name, supplies } = req.body || {};
+            console.log(name, supplies);
+            const newImport = new Import(req.body);
+            supplies.map(async (supply) => {
+                const supplyCurrent = await Supplies.findOne({ _id: supply.name });
+                const newQuantity = supplyCurrent?.quantity + supply.quantity;
+                await Supplies.updateOne(
+                    { _id: supply.name },
+                    {
+                        quantity: newQuantity,
+                    }
+                );
+            })
+            await newImport.save();
+            return res.status(200).json({
+                success: true,
+                message: 'Nhập thành công!',
             })
         } catch (error) {
             console.log(error);

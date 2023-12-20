@@ -6,6 +6,7 @@ const routes = {
   account: 'account',
   staff: 'staff',
   export: 'export',
+  import: 'import',
   notPage: '*'
 };
 

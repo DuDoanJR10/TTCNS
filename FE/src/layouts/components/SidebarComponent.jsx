@@ -9,7 +9,8 @@ import {
   FaLayerGroup,
   FaHotel,
   FaUserGroup,
-  FaFileExport 
+  FaFileExport,
+  FaFileImport 
 } from 'react-icons/fa6';
 
 const menuAdmin = [
@@ -76,6 +77,15 @@ const menuAdmin = [
       </div>
     ),
   },
+  {
+    key: 7,
+    label: <Link to="/import">Phiếu nhập</Link>,
+    icon: (
+      <div className="Sidebar__icon">
+        <FaFileImport   className="icon-menu" />
+      </div>
+    ),
+  },
 ];
 
 const menuUser = [
@@ -90,7 +100,7 @@ const menuUser = [
   },
 ];
 
-const redirectLinks = ['/', '/category', '/supplies', '/account', '/staff', '/room', '/export'];
+const redirectLinks = ['/', '/category', '/supplies', '/account', '/staff', '/room', '/export', '/import'];
 
 const SidebarComponent = ({ className, admin }) => {
   const location = useLocation();

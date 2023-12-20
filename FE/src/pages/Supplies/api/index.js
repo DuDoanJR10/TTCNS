@@ -28,3 +28,10 @@ export const exportSupplies = (dataExport, axiosJWT, accessToken) => {
             headers: { token: `Bearer ${accessToken}` }
         })
 }
+
+export const importSupplies = (dataImport, axiosJWT, accessToken) => {
+    return axiosJWT.post(`${process.env.REACT_APP_URL_API}/v1/api/supplies/import`, dataImport,
+        {
+            headers: { token: `Bearer ${accessToken}` }
+        })
+}
