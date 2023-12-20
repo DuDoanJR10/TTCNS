@@ -14,7 +14,7 @@ import createAxios from '../../../utils/createAxios';
 import { loginSuccess } from '../../Auth/store/authSlice';
 import ModalAdd from '../components/ModalAdd';
 import ModalUpdate from '../../Account/components/ModalUpdate';
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
 const Account = () => {
   const dispatch = useDispatch();
@@ -53,7 +53,7 @@ const Account = () => {
 
   const handleDelete = (id) => {
     dispatch(setLoading(true));
-    deleteAccount(id, axiosJWT, user?.accessToken).then(res => {
+    deleteAccount(id, axiosJWT, user?.accessToken).then((res) => {
       dispatch(setLoading(false));
       if (res.data?.success) {
         dispatch(setListAccounts(res.data?.Accounts));
@@ -65,7 +65,7 @@ const Account = () => {
       if (res.data?.toHome) {
         navigate('/');
       }
-    })
+    });
   };
   const handleEdit = (record) => {
     dispatch(
@@ -76,11 +76,11 @@ const Account = () => {
         password: record.password,
         phone: record?.phone,
         address: record?.address,
-        role: record?.role
-      })
-    )
+        role: record?.role,
+      }),
+    );
   };
-  
+
   const columns = [
     {
       title: 'STT',
@@ -139,9 +139,7 @@ const Account = () => {
             cancelText="Hủy"
             onConfirm={() => handleDelete(record._id)}
           >
-            <Button danger>
-              Xóa
-            </Button>
+            <Button danger>Xóa</Button>
           </Popconfirm>
         </Space>
       ),
@@ -152,11 +150,16 @@ const Account = () => {
     <div className="Account">
       <div className="container">
         <h1 className="heading box-shadow">Tài khoản</h1>
-        <Button type='primary' className="button-create box-shadow" onClick={handleCreate}>
+        <Button
+          type="primary"
+          className="button-create box-shadow border-[3px] border-primary hover:!bg-white hover:!text-primary"
+          onClick={handleCreate}
+        >
           Tạo
         </Button>
         <div className="Account__table w-full">
           <Table
+            pagination={{ position: ['bottomCenter'] }}
             className="w-full"
             columns={columns}
             dataSource={listAccounts}

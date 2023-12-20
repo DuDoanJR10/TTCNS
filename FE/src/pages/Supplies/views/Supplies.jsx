@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Space, Table, Button, Popconfirm } from 'antd';
 import TextDisplay from '../../../components/TextDisplay';
 import ModalAdd from '../components/ModalAdd';
@@ -14,9 +14,11 @@ import showMessage from '../../../hooks/message-hooks';
 import ModalUpdate from '../components/ModalUpdate';
 import createAxios from '../../../utils/createAxios';
 import { loginSuccess } from '../../Auth/store/authSlice';
+import ModalExport from '../components/ModalExport';
 
 const Supplies = () => {
   const dispatch = useDispatch();
+  const [openExport, setOpenExport] = useState(false);
   let listSupplies = useSelector((state) => state.supplies?.listSupplies);
   const loading = useSelector((state) => state.supplies?.loading);
   const user = useSelector((state) => state.auth.login?.currentUser);
@@ -24,6 +26,7 @@ const Supplies = () => {
   const handleCreate = () => {
     dispatch(setModalAdd({ open: true }));
   };
+
   useEffect(() => {
     dispatch(setLoading(true));
     getListSupplies().then((res) => {
@@ -35,7 +38,8 @@ const Supplies = () => {
         showMessage().showError(res.data?.message);
       }
     });
-  }, [dispatch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleDelete = (id) => {
     dispatch(setLoading(true));
@@ -50,6 +54,7 @@ const Supplies = () => {
       }
     });
   };
+
   const handleEdit = (record) => {
     dispatch(
       setModalUpdate({
@@ -65,6 +70,14 @@ const Supplies = () => {
         image: record?.image,
       }),
     );
+  };
+
+  const handleExport = () => {
+    setOpenExport(true);
+  };
+
+  const handleClose = () => {
+    setOpenExport(false);
   };
 
   const columns = [
@@ -157,6 +170,7 @@ const Supplies = () => {
       ),
     },
   ];
+  
   if (listSupplies) {
     listSupplies = listSupplies.map((supplies, index) => {
       return {
@@ -171,11 +185,25 @@ const Supplies = () => {
     <div className="Supplies">
       <div className="container">
         <h1 className="heading box-shadow">Vật tư và thiết bị</h1>
-        <Button type='primary' className="button-create box-shadow" onClick={handleCreate}>
-          Tạo
-        </Button>
+        <Space size={'middle'}>
+          <Button
+            type="primary"
+            className="button-create box-shadow border-[3px] border-primary hover:!bg-white hover:!text-primary"
+            onClick={handleCreate}
+          >
+            Tạo
+          </Button>
+          <Button
+            type="primary"
+            className="button-create box-shadow border-[3px] border-primary hover:!bg-white hover:!text-primary"
+            onClick={handleExport}
+          >
+            Xuất
+          </Button>
+        </Space>
         <div className="Supplies__table">
           <Table
+            pagination={{ position: ['bottomCenter'] }}
             loading={loading}
             columns={columns}
             dataSource={listSupplies}
@@ -183,6 +211,7 @@ const Supplies = () => {
         </div>
         <ModalAdd />
         <ModalUpdate />
+        <ModalExport open={openExport} handleClose={handleClose} />
       </div>
     </div>
   );

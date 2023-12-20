@@ -60,7 +60,7 @@ const Login = ({ showModalRegister, handleCancel }) => {
           <Input.Password />
         </Form.Item>
         <Form.Item name="role" initialValue="user">
-          <Radio.Group defaultValue="user" size="large">
+          <Radio.Group size="large">
             <Radio.Button value="user">Người dùng</Radio.Button>
             <Radio.Button value="admin">Người quản trị</Radio.Button>
           </Radio.Group>

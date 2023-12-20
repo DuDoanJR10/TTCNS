@@ -85,7 +85,7 @@ const ModalUpdate = () => {
   return (
     <Modal
       centered
-      title={<h2 className='text-center text-3xl'>Sửa tài khoản</h2>}
+      title={<h2 className='text-center text-primary text-3xl'>Sửa tài khoản</h2>}
       open={modalUpdate?.open}
       footer={null}
       onCancel={handleClose}
@@ -172,7 +172,7 @@ const ModalUpdate = () => {
           <Input />
         </Form.Item>
         <Form.Item name="role" initialValue="user">
-          <Radio.Group defaultValue="user" size="large">
+          <Radio.Group size="large">
             <Radio.Button value="user">Người dùng</Radio.Button>
             <Radio.Button value="admin">Người quản trị</Radio.Button>
           </Radio.Group>

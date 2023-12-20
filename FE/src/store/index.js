@@ -16,18 +16,19 @@ import categorySlice from "../pages/Category/store/categorySlice";
 import accountSlice from "../pages/Account/store/accountSlice";
 import suppliesSlice from "../pages/Supplies/store/suppliesSlice";
 import roomSlice from "../pages/Room/store/roomSlice";
+import staffSlice from '../pages/Staff/store/staffSlice';
 
 const persistConfig = {
     key: 'root',
     version: 1,
     storage,
-    blacklist: ['supplies', 'category', 'account', 'room']
+    blacklist: ['supplies', 'category', 'account', 'room', 'staff']
 }
 
 const suppliesPersistConfig = {
     key: 'supplies',
     storage: storage,
-    blacklist: ['modalAdd', 'modalUpdate', 'modalView']
+    blacklist: ['modalAdd', 'modalUpdate', 'modalView', 'listSuppliesExport']
 }
 
 const categoryPersistConfig = {
@@ -48,12 +49,19 @@ const roomPersistConfig = {
     blacklist: ['modalAdd', 'modalUpdate']
 }
 
+const staffPersistConfig = {
+    key: 'staff',
+    storage: storage,
+    blacklist: ['modalAdd', 'modalUpdate']
+}
+
 const rootReducer = combineReducers({
     auth: authSlice,
     category: persistReducer(categoryPersistConfig, categorySlice),
     account: persistReducer(accountPersistConfig, accountSlice),
     supplies: persistReducer(suppliesPersistConfig, suppliesSlice),
-    room: persistReducer(roomPersistConfig, roomSlice)
+    room: persistReducer(roomPersistConfig, roomSlice),
+    staff: persistReducer(staffPersistConfig, staffSlice),
 })
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

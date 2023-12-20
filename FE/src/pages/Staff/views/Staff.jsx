@@ -1,35 +1,37 @@
-import React from 'react';
-import ModalAdd from '../components/ModalAdd';
+import React, { useEffect } from 'react';
+import { Space, Table, Button, Popconfirm } from 'antd';
 import TextDisplay from '../../../components/TextDisplay';
-import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import ModalAdd from '../components/ModalAdd';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  setListStaff,
+  setLoading,
+  setModalAdd,
+  setModalUpdate,
+} from '../store/staffSlice';
+import { deleteStaff, getListStaff } from '../api';
 import showMessage from '../../../hooks/message-hooks';
-import { useSelector } from 'react-redux';
+import ModalUpdate from '../components/ModalUpdate';
 import createAxios from '../../../utils/createAxios';
 import { loginSuccess } from '../../Auth/store/authSlice';
-import { Button, Popconfirm, Space, Table } from 'antd';
-import ModalUpdate from '../components/ModalUpdate';
-import { deleteRoom, getListRoom } from '../api';
-import {
-  setLoading,
-  setListRoom,
-  setModalUpdate,
-  setModalAdd,
-} from '../store/roomSlice';
 
-const Room = () => {
+const Staff = () => {
   const dispatch = useDispatch();
+  let listStaff = useSelector((state) => state.staff?.listStaff);
+  const loading = useSelector((state) => state.staff?.loading);
   const user = useSelector((state) => state.auth.login?.currentUser);
   const axiosJWT = createAxios(user, dispatch, loginSuccess);
-  const loading = useSelector((state) => state.room?.loading);
-  let listRoom = useSelector((state) => state.room?.listRoom);
+
+  const handleCreate = () => {
+    dispatch(setModalAdd({ open: true }));
+  };
 
   useEffect(() => {
     dispatch(setLoading(true));
-    getListRoom(user?.accessToken, axiosJWT).then((res) => {
+    getListStaff(user?.accessToken, axiosJWT).then((res) => {
       dispatch(setLoading(false));
       if (res.data?.success) {
-        dispatch(setListRoom(res.data?.listRoom));
+        dispatch(setListStaff(res.data?.listStaff));
       } else {
         console.log(res.data?.error);
         showMessage().showError(res.data?.message);
@@ -40,10 +42,10 @@ const Room = () => {
 
   const handleDelete = (id) => {
     dispatch(setLoading(true));
-    deleteRoom(id, axiosJWT, user?.accessToken).then((res) => {
+    deleteStaff(id, axiosJWT, user?.accessToken).then((res) => {
       dispatch(setLoading(false));
       if (res.data?.success) {
-        dispatch(setListRoom(res.data?.listRoom));
+        dispatch(setListStaff(res.data?.listStaff));
         showMessage().showSuccess(res.data?.message);
       } else {
         console.log(res.data?.error);
@@ -51,13 +53,15 @@ const Room = () => {
       }
     });
   };
+
   const handleEdit = (record) => {
     dispatch(
       setModalUpdate({
         open: true,
         id: record?._id,
+        room: record?.idRoom,
+        phone: record?.phone,
         name: record?.name,
-        description: record?.description,
       }),
     );
   };
@@ -75,15 +79,21 @@ const Room = () => {
       render: (text) => <TextDisplay text={text} />,
     },
     {
-      title: 'Tên phòng ban',
+      title: 'Tên nhân viên',
       dataIndex: 'name',
       key: 'name',
       render: (text) => <TextDisplay text={text} />,
     },
     {
-      title: 'Mô tả',
-      dataIndex: 'description',
-      key: 'description',
+      title: 'Số điện thoại',
+      dataIndex: 'phone',
+      key: 'phone',
+      render: (text) => <TextDisplay text={text} />,
+    },
+    {
+      title: 'Phòng ban',
+      key: 'room',
+      dataIndex: 'room',
       render: (text) => <TextDisplay text={text} />,
     },
     {
@@ -104,23 +114,20 @@ const Room = () => {
       ),
     },
   ];
-
-  const handleCreate = () => {
-    dispatch(setModalAdd({ open: true }));
-  };
-  if (listRoom) {
-    listRoom = listRoom.map((category, index) => {
+  if (listStaff) {
+    listStaff = listStaff.map((staff, index) => {
       return {
-        ...category,
+        ...staff,
         key: index + 1,
+        room: staff?.room?.name,
+        idRoom: staff?.room?._id,
       };
     });
   }
-
   return (
-    <div className="Category">
+    <div className="Staff">
       <div className="container">
-        <h1 className="heading box-shadow">Phòng ban</h1>
+        <h1 className="heading box-shadow">Nhân viên</h1>
         <Button
           type="primary"
           className="button-create box-shadow border-[3px] border-primary hover:!bg-white hover:!text-primary"
@@ -128,19 +135,19 @@ const Room = () => {
         >
           Tạo
         </Button>
-        <div className="Category__table">
+        <div className="Staff__table">
           <Table
             pagination={{ position: ['bottomCenter'] }}
             loading={loading}
             columns={columns}
-            dataSource={listRoom}
+            dataSource={listStaff}
           />
         </div>
-        <ModalUpdate />
         <ModalAdd />
+        <ModalUpdate />
       </div>
     </div>
   );
 };
 
-export default Room;
+export default Staff;

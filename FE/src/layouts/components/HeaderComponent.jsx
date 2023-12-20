@@ -3,13 +3,10 @@ import '../styles/Header.scss';
 import { Layout, Space, Button, Dropdown } from 'antd';
 import Auth from '../../pages/Auth/views/Auth';
 import { useSelector } from 'react-redux';
-import {
-  FaCircleUser,
-  FaArrowRightFromBracket,
-} from 'react-icons/fa6';
+import { FaCircleUser, FaArrowRightFromBracket } from 'react-icons/fa6';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { LoadingOutlined } from '@ant-design/icons'
+import { LoadingOutlined } from '@ant-design/icons';
 import {
   logoutFailed,
   logoutStart,
@@ -169,7 +166,7 @@ const HeaderComponent = () => {
                   type="text"
                   id="simple-search"
                   className="input h-full border-2 border-third w-full rounded-full pl-10 pr-10"
-                  placeholder="Search"
+                  placeholder="Tìm kiếm vật tư và thiết bị"
                   required
                 />
               </HeadlessTippy>
@@ -203,16 +200,16 @@ const HeaderComponent = () => {
                 </Button>
               </Dropdown>
             ) : (
-              <Space>
+              <Space className="h-[60px]">
                 <Button
-                  className="box-shadow"
-                  type="primary !h-10 items-center"
+                  className="box-shadow text-lg !h-[46px] items-center hover:!bg-white hover:!text-primary border-primary border-[3px]"
+                  type="primary"
                   onClick={showModalLogin}
                 >
                   Đăng nhập
                 </Button>
                 <Button
-                  className="box-shadow !h-10 items-center"
+                  className="box-shadow text-lg !h-[46px] items-center hover:!text-primary hover:!bg-white border-primary border-[3px]"
                   type="primary"
                   onClick={showModalRegister}
                 >

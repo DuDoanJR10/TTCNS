@@ -45,7 +45,7 @@ const ModalAdd = () => {
   return (
     <Modal
       centered
-      title={<h2 className='text-center text-3xl'>Tạo danh mục</h2>}
+      title={<h2 className='text-center text-primary text-3xl'>Tạo danh mục</h2>}
       open={modalAdd?.open}
       footer={null}
       onCancel={handleClose}

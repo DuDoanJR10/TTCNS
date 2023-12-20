@@ -7,6 +7,8 @@ const Supplies = React.lazy(() => import('../pages/Supplies/views/Supplies'));
 const NotPage = React.lazy(() => import('../pages/NotPage/views/NotPage'));
 const Account = React.lazy(() => import('../pages/Account/views/Account'));
 const Room = React.lazy(() => import('../pages/Room/views/Room'));
+const Staff = React.lazy(() => import('../pages/Staff/views/Staff'));
+const Export = React.lazy(() => import('../pages/Export/views/Export'));
 
 export const routesAdmin = [
   {
@@ -42,6 +44,18 @@ export const routesAdmin = [
     path: configs.routes.room,
     exact: true,
     element: Room,
+    footer: true,
+  },
+  {
+    path: configs.routes.staff,
+    exact: true,
+    element: Staff,
+    footer: true,
+  },
+  {
+    path: configs.routes.export,
+    exact: true,
+    element: Export,
     footer: true,
   },
 ];

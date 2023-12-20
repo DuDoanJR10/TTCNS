@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const Export = new Schema({
+const Import = new Schema({
     name: {
         type: String,
         required: true,
@@ -10,15 +10,6 @@ const Export = new Schema({
     date: {
         type: String,
         required: true,
-    },
-    staff: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Staff",
-        required: true,
-    },
-    room: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Room"
     },
     supplies: [
         {
@@ -36,4 +27,4 @@ const Export = new Schema({
     ]
 })
 
-module.exports = mongoose.model('Export', Export);
+module.exports = mongoose.model('Import', Import);

@@ -4,6 +4,8 @@ const routes = {
   supplies: 'supplies',
   room: 'room',
   account: 'account',
+  staff: 'staff',
+  export: 'export',
   notPage: '*'
 };
 

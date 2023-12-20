@@ -1,5 +1,6 @@
 const Supplies = require('../models/Supplies');
 const Category = require('../models/Category');
+const Export = require('../models/Export');
 
 const suppliesController = {
     // [GET]: /v1/api/supplies/get-all
@@ -78,12 +79,11 @@ const suppliesController = {
                     size,
                     color,
                     quantity,
-                    id,
                     image
                 }
             );
             await Category.updateMany({ supplies: id }, { $pull: { supplies: id } })
-            const categoryNew = Category.findById(category);
+            const categoryNew = await Category.findById(category);
             await categoryNew.updateOne({ $push: { supplies: id } });
             const listSupplies = await Supplies.find({}).populate("category");
             return res.status(200).json({
@@ -100,8 +100,56 @@ const suppliesController = {
             })
         }
     },
+    // [GET]: /v1/api/supplies/get-all-export
+    async getAllExport(req, res) {
+        try {
+            const listExport = await Export.find({}).populate('staff');
+            return res.status(200).json({
+                success: true,
+                message: "",
+                listExport
+            })
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({
+                success: false,
+                message: 'Có lỗi xảy ra, vui lòng thử lại!',
+                error
+            })
+        }
+    },
+    // [POST]: /v1/api/supplies/export
+    async exportSupplies(req, res) {
+        try {
+            const { supplies, name, room, staff, date } = req.body || {};
+            console.log(supplies, name, room, staff, date);
+            const newExport = new Export(req.body);
+            supplies.map(async (supply) => {
+                const supplyCurrent = await Supplies.findOne({ _id: supply.name });
+                const newQuantity = supplyCurrent?.quantity - supply.quantity;
+                await Supplies.updateOne(
+                    { _id: supply.name },
+                    {
+                        quantity: newQuantity,
+                    }
+                );
+            })
+            await newExport.save();
+            return res.status(200).json({
+                success: true,
+                message: 'Xuất thành công!',
+            })
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({
+                success: false,
+                message: 'Có lỗi xảy ra, vui lòng thử lại!',
+                error
+            })
+        }
+    },
     async deleteSupplies(req, res) {
-        try {  
+        try {
             const id = req.params.id;
             await Category.updateMany({ supplies: id }, { $pull: { supplies: id } });
             await Supplies.findByIdAndDelete(id);
@@ -143,7 +191,8 @@ const suppliesController = {
                 error
             })
         }
-    }
+    },
+
 }
 
 module.exports = suppliesController;

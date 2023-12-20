@@ -1,13 +1,17 @@
 import React from 'react';
-import { Button, Input, Form, Radio, Modal } from 'antd';
+import { Button, Input, Form, Radio, Modal, Space } from 'antd';
 import createAxios from '../../../utils/createAxios';
 import { useSelector, useDispatch } from 'react-redux';
 import { loginSuccess } from '../../Auth/store/authSlice';
-import { setListAccounts, setLoading, setModalAdd } from '../store/accountSlice';
+import {
+  setListAccounts,
+  setLoading,
+  setModalAdd,
+} from '../store/accountSlice';
 import { addAccount } from '../api';
 import showMessage from '../../../hooks/message-hooks';
 import '../styles/Account.scss';
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
 const { TextArea } = Input;
 
@@ -28,21 +32,21 @@ const ModalAdd = () => {
       address: values.address?.trim(),
     };
     dispatch(setLoading(true));
-    addAccount(newAccount, axiosJWT, user?.accessToken).then(res => {
-        dispatch(setLoading(false));
-        if (res.data.success) {
-            form.resetFields();
-            dispatch(setListAccounts(res.data?.Accounts));
-            showMessage().showSuccess(res.data?.message);
-            dispatch(setModalAdd({ open: false }));
-        } else {
-            console.log(res.data?.error);
-            showMessage().showError(res.data?.message);
-        }
-        if (res.data?.toHome) {
-          navigate('/');
-        }
-    })
+    addAccount(newAccount, axiosJWT, user?.accessToken).then((res) => {
+      dispatch(setLoading(false));
+      if (res.data.success) {
+        form.resetFields();
+        dispatch(setListAccounts(res.data?.Accounts));
+        showMessage().showSuccess(res.data?.message);
+        dispatch(setModalAdd({ open: false }));
+      } else {
+        console.log(res.data?.error);
+        showMessage().showError(res.data?.message);
+      }
+      if (res.data?.toHome) {
+        navigate('/');
+      }
+    });
   };
 
   const validatorWhiteSpace = (rule, value, callback) => {
@@ -60,7 +64,7 @@ const ModalAdd = () => {
   return (
     <Modal
       centered
-      title={<h2 className='text-center text-3xl'>Tạo tài khoản</h2>}
+      title={<h2 className="text-center text-primary text-3xl">Tạo tài khoản</h2>}
       open={modalAdd?.open}
       footer={null}
       onCancel={handleClose}
@@ -149,21 +153,31 @@ const ModalAdd = () => {
           <Input />
         </Form.Item>
         <Form.Item name="role" initialValue="user">
-          <Radio.Group defaultValue="user" size="large">
+          <Radio.Group size="large">
             <Radio.Button value="user">Người dùng</Radio.Button>
             <Radio.Button value="admin">Người quản trị</Radio.Button>
           </Radio.Group>
         </Form.Item>
-        <Form.Item>
-          <Button
-            className="m-auto flex text-black items-center text-xl justify-center min-w-[140px] font-semibold"
-            type="primary"
-            htmlType="submit"
-            loading={loading}
-          >
-            Tạo
-          </Button>
-        </Form.Item>
+        <Space align="center" className="w-full justify-end">
+          <Form.Item className="m-0">
+            <Button
+              className="m-auto flex text-black items-center text-xl justify-center min-w-[140px] font-semibold"
+              onClick={handleClose}
+            >
+              Hủy
+            </Button>
+          </Form.Item>
+          <Form.Item className="m-0">
+            <Button
+              className="m-auto  flex text-black items-center text-xl justify-center min-w-[140px] font-semibold"
+              type="primary"
+              htmlType="submit"
+              loading={loading}
+            >
+              Tạo
+            </Button>
+          </Form.Item>
+        </Space>
       </Form>
     </Modal>
   );

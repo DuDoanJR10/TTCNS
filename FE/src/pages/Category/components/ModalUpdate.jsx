@@ -57,7 +57,7 @@ const ModalUpdate = () => {
   return (
     <Modal
       centered
-      title={<h2 className='text-center text-3xl'>Sửa danh mục</h2>}
+      title={<h2 className='text-center text-3xl text-primary'>Sửa danh mục</h2>}
       open={modalUpdate?.open}
       footer={null}
       onCancel={handleClose}

@@ -29,7 +29,8 @@ const suppliesSlice = createSlice({
             color: '',
             size: '',
             image: '',
-        }
+        },
+        listSuppliesExport: [],
     }, reducers: {
         setLoading(state, action) {
             state.loading = action.payload;
@@ -45,6 +46,9 @@ const suppliesSlice = createSlice({
         },
         setModalView(state, action) {
             state.modalView = action.payload;
+        },
+        setExportSupplies(state, action) {
+            state.listSuppliesExport = action.payload
         }
     }
 })
@@ -54,7 +58,9 @@ export const {
     setListSupplies,
     setModalAdd,
     setModalUpdate,
-    setModalView
+    setModalView,
+    setExportSupplies,
+    setModalExport
 } = suppliesSlice.actions;
 
 export default suppliesSlice.reducer;

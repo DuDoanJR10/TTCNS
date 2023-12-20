@@ -30,12 +30,15 @@ const ModalAdd = () => {
   const axiosJWT = createAxios(user, dispatch, loginSuccess);
   const [fileImage, setFileImage] = useState('');
   let listCategories = useSelector((state) => state.category?.listCategories);
-  const listCategoriesMenu = listCategories.map((category) => {
-    return {
-      value: category._id,
-      label: category.name,
-    };
-  });
+  let listCategoriesMenu = [];
+  if (listCategories) {
+    listCategoriesMenu = listCategories.map((category) => {
+      return {
+        value: category._id,
+        label: category.name,
+      };
+    });
+  }
   const handleAdd = (values) => {
     const newSupplies = {
       ...values,
@@ -51,12 +54,12 @@ const ModalAdd = () => {
       dispatch(setLoading(false));
       if (res.data.success) {
         form.resetFields();
-        setFileImage('')
+        setFileImage('');
         dispatch(setListSupplies(res.data?.listSupplies));
         dispatch(setModalAdd({ open: false }));
         showMessage().showSuccess(res.data?.message);
       } else {
-        console.log('error')
+        console.log('error');
         console.log(res.data?.error);
         showMessage().showError(res.data?.message);
       }
@@ -71,11 +74,11 @@ const ModalAdd = () => {
     if (file?.status === 'done') {
       const filePath = file?.response?.filePath.split('\\')[1];
       setFileImage(filePath);
-      showMessage().showSuccess(file?.response?.message)
+      showMessage().showSuccess(file?.response?.message);
     }
     if (file?.status === 'error') {
       setFileImage('');
-      showMessage().showError(file?.response?.message)
+      showMessage().showError(file?.response?.message);
     }
     if (file?.status === 'removed') {
       setFileImage('');
@@ -85,7 +88,7 @@ const ModalAdd = () => {
     <Modal
       open={modalAdd?.open}
       centered
-      title={<h2 className="text-center text-3xl">Tạo vật tư</h2>}
+      title={<h2 className="text-center text-primary text-3xl">Tạo vật tư</h2>}
       footer={null}
       onCancel={handleClose}
     >
@@ -155,7 +158,7 @@ const ModalAdd = () => {
           </Form.Item>
           <Form.Item className="m-0">
             <Button
-              className="m-auto flex text-black items-center text-xl justify-center min-w-[140px] font-semibold"
+              className="m-auto flex  text-black items-center text-xl justify-center min-w-[140px] font-semibold"
               type="primary"
               htmlType="submit"
               loading={modalAdd?.loading}

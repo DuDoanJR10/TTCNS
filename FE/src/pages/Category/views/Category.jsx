@@ -23,6 +23,20 @@ const Category = () => {
   const axiosJWT = createAxios(user, dispatch, loginSuccess);
   let listCategories = useSelector((state) => state.category?.listCategories);
 
+  useEffect(() => {
+    dispatch(setLoading(true));
+    getListCategories(user?.accessToken, axiosJWT).then((res) => {
+      dispatch(setLoading(false));
+      if (res.data?.success) {
+        dispatch(setListCategories(res.data?.Categories));
+      } else {
+        console.log(res.data?.error);
+        showMessage().showError(res.data?.message);
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleDelete = (id) => {
     dispatch(setLoading(true));
     deleteCategory(id, axiosJWT, user?.accessToken).then((res) => {
@@ -90,20 +104,6 @@ const Category = () => {
     },
   ];
 
-  useEffect(() => {
-    dispatch(setLoading(true));
-    getListCategories().then((res) => {
-      dispatch(setLoading(false));
-      if (res.data?.success) {
-        dispatch(setListCategories(res.data?.Categories));
-      } else {
-        console.log(res.data?.error);
-        showMessage().showError(res.data?.message);
-      }
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const handleCreate = () => {
     dispatch(setModalAdd({ open: true }));
   };
@@ -120,11 +120,16 @@ const Category = () => {
     <div className="Category">
       <div className="container">
         <h1 className="heading box-shadow">Danh mục</h1>
-        <Button type='primary' className="button-create box-shadow" onClick={handleCreate}>
+        <Button
+          type="primary"
+          className="button-create box-shadow border-[3px] border-primary hover:!bg-white hover:!text-primary"
+          onClick={handleCreate}
+        >
           Tạo
         </Button>
         <div className="Category__table">
           <Table
+            pagination={{ position: ['bottomCenter'] }}
             loading={loading}
             columns={columns}
             dataSource={listCategories}
