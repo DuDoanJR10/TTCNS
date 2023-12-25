@@ -25,7 +25,7 @@ const Category = () => {
 
   useEffect(() => {
     dispatch(setLoading(true));
-    getListCategories(user?.accessToken, axiosJWT).then((res) => {
+    getListCategories().then((res) => {
       dispatch(setLoading(false));
       if (res.data?.success) {
         dispatch(setListCategories(res.data?.Categories));

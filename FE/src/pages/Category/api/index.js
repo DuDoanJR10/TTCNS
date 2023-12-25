@@ -1,9 +1,7 @@
-export const getListCategories = (accessToken, axiosJWT) => {
-    return axiosJWT.get(`${process.env.REACT_APP_URL_API}/v1/api/category/get-all`, {
-        withCredentials: true,
-        credentials: true,
-        headers: { token: `Bearer ${accessToken}`},
-    });
+import axios from "axios";
+
+export const getListCategories = () => {
+    return axios.get(`${process.env.REACT_APP_URL_API}/v1/api/category/get-all`);
 }
 
 export const addCategory = (newCategory, axiosJWT, accessToken) => {

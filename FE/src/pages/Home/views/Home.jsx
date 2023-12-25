@@ -33,8 +33,8 @@ const Home = () => {
     <div className="Home">
       <div className="container">
         <h1 className="heading box-shadow">Trang chủ</h1>
-        {/* <Slide />
-        <h1 className="heading box-shadow">Vật tư và thiết bị</h1> */}
+        <Slide />
+        <h1 className="heading box-shadow">Vật tư và thiết bị</h1>
         <div className="Home__body">
           {!loading ? (
             <div className="grid flex-wrap grid-cols-1 sd:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-5 sm:gap-10 mb-12 xl:grid-cols-3 2xl:grid-cols-4">
@@ -55,7 +55,11 @@ const Home = () => {
           )}
         </div>
       </div>
-      <ModalView handleClose={handleCancel} open={modalView?.open} data={modalView}/>
+      <ModalView
+        handleClose={handleCancel}
+        open={modalView?.open}
+        data={modalView}
+      />
     </div>
   );
 };

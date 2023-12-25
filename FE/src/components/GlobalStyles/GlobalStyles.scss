@@ -68,7 +68,7 @@ th {
 
 @layer components {
   .heading {
-    @apply  leading-normal text-3xl font-bold rounded-2xl bg-primary py-1 px-3 mt-5 mb-7 text-white;
+    @apply  leading-normal text-3xl font-bold rounded-xl bg-primary py-1 px-3 mt-5 mb-7 text-white;
   } 
   .button-create {
     @apply mb-5;
