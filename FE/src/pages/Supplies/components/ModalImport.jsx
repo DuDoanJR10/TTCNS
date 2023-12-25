@@ -259,7 +259,7 @@ import {
           .map((item, index) => ({ ...item, key: index }));
         const dataImport = {
           supplies: listImport,
-          name: values?.name,
+          name: values?.name?.trim(),
         }
         setLoading(true);
         importSupplies(dataImport, axiosJWT, user?.accessToken).then(res => {

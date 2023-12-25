@@ -305,7 +305,7 @@ const ModalExport = ({ open, handleClose }) => {
       }
       const dataExport = {
         supplies: listExport,
-        name: values?.name,
+        name: values?.name?.trim(),
         room: values?.room,
         staff: values?.staff,
       };

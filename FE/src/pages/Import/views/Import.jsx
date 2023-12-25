@@ -6,11 +6,15 @@ import { loginSuccess } from '../../Auth/store/authSlice';
 import { getListImport } from '../api';
 import showMessage from '../../../hooks/message-hooks';
 import TextDisplay from '../../../components/TextDisplay';
+import moment from 'moment';
+import ViewImport from '../components/ViewImport';
 
 const Import = () => {
   const [listImport, setListImport] = useState([]);
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
+  const [open, setOpen] = useState(false);
+  const [record, setRecord] = useState({});
   const user = useSelector((state) => state.auth.login?.currentUser);
   const axiosJWT = createAxios(user, dispatch, loginSuccess);
   useEffect(() => {
@@ -46,13 +50,15 @@ const Import = () => {
       render: (text) => <TextDisplay text={text} />,
     },
     {
-        title: 'Ngày nhập',
-        dataIndex: 'date',
-        key: 'date',
-        render: (text) => <TextDisplay text={text} />,
+      title: 'Ngày nhập',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      render: (text) => (
+        <TextDisplay text={moment(text).format('DD/MM/YYYY')} />
+      ),
     },
   ];
-  let customList = []
+  let customList = [];
   if (listImport) {
     customList = listImport.map((supplies, index) => {
       return {
@@ -61,19 +67,33 @@ const Import = () => {
       };
     });
   }
-  console.log('customList: ', customList);
+  const handleClose = () => setOpen(false);
+
+  const handleClick = (record, index) => {
+    return {
+      onClick: () => {
+        setOpen(true);
+        setRecord(record);
+        console.log('record: ', record);
+      },
+    };
+  };
   return (
-    <div className="Import">
-      <div className="container">
-        <h1 className="heading box-shadow">Phiếu nhập</h1>
-        <Table
-          pagination={{ position: ['bottomCenter'] }}
-          loading={loading}
-          columns={columns}
-          dataSource={customList}
-        />
+    <>
+      <div className="Import">
+        <div className="container">
+          <h1 className="heading box-shadow">Phiếu nhập</h1>
+          <Table
+            pagination={{ position: ['bottomCenter'] }}
+            loading={loading}
+            columns={columns}
+            dataSource={customList}
+            onRow={handleClick}
+          />
+        </div>
       </div>
-    </div>
+      <ViewImport record={record} open={open} handleClose={handleClose} />
+    </>
   );
 };
 

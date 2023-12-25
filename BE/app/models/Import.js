@@ -13,11 +13,17 @@ const Import = new Schema({
                 type: mongoose.Schema.Types.ObjectId,
                 ref: "Supplies"
             },
-            quantity: {
+            quantityImport: {
+                type: Number
+            },
+            oldQuantity: {
                 type: Number
             },
             key: {
                 type: Number
+            },
+            created: {
+                type: String 
             }
         }
     ]

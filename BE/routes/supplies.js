@@ -15,4 +15,6 @@ router.get('/get-all-export', middlewareVerify.verifyAdmin, suppliesController.g
 router.get('/get-all-import', middlewareVerify.verifyAdmin, suppliesController.getAllImport);
 router.post('/import', middlewareVerify.verifyAdmin, suppliesController.importSupplies);
 
+router.post('/get-report', middlewareVerify.verifyAdmin, suppliesController.getReport);
+
 module.exports = router

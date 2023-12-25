@@ -6,10 +6,14 @@ import { loginSuccess } from '../../Auth/store/authSlice';
 import { getListExport } from '../api';
 import showMessage from '../../../hooks/message-hooks';
 import TextDisplay from '../../../components/TextDisplay';
+import moment from 'moment';
+import ViewExport from '../components/ViewExport';
 
 const Export = () => {
   const [listExport, setListExport] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [record, setRecord] = useState({});
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.login?.currentUser);
   const axiosJWT = createAxios(user, dispatch, loginSuccess);
@@ -46,41 +50,65 @@ const Export = () => {
       render: (text) => <TextDisplay text={text} />,
     },
     {
-        title: 'Ngày xuất',
-        dataIndex: 'date',
-        key: 'date',
-        render: (text) => <TextDisplay text={text} />,
-    }, 
+      title: 'Ngày xuất',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      render: (text) => (
+        <TextDisplay text={moment(text).format('DD/MM/YYYY')} />
+      ),
+    },
     {
-        title: 'Nhân viên nhận',
-        dataIndex: 'staff',
-        key: 'staff',
-        render: (text) => <TextDisplay text={text} />,
-    }
+      title: 'Nhân viên nhận',
+      dataIndex: 'staff',
+      key: 'staff',
+      render: (text) => <TextDisplay text={text} />,
+    },
+    {
+      title: 'Phòng ban nhận',
+      dataIndex: 'room',
+      key: 'room',
+      render: (text) => <TextDisplay text={text} />,
+    },
   ];
-  let customList = []
+  let customList = [];
   if (listExport) {
     customList = listExport.map((supplies, index) => {
       return {
         ...supplies,
         key: index + 1,
         staff: supplies?.staff?.name,
+        room: supplies?.room?.name,
       };
     });
   }
 
+  const handleClose = () => setOpen(false);
+
+  const handleClick = (record, index) => {
+    return {
+      onClick: () => {
+        setOpen(true);
+        setRecord(record);
+        console.log('record: ', record);
+      },
+    };
+  };
   return (
-    <div className="Export">
-      <div className="container">
-        <h1 className="heading box-shadow">Phiếu xuất</h1>
-        <Table
-          pagination={{ position: ['bottomCenter'] }}
-          loading={loading}
-          columns={columns}
-          dataSource={customList}
-        />
+    <>
+      <div className="Export">
+        <div className="container">
+          <h1 className="heading box-shadow">Phiếu xuất</h1>
+          <Table
+            pagination={{ position: ['bottomCenter'] }}
+            loading={loading}
+            columns={columns}
+            dataSource={customList}
+            onRow={handleClick}
+          />
+        </div>
       </div>
-    </div>
+      <ViewExport record={record} open={open} handleClose={handleClose} />
+    </>
   );
 };
 

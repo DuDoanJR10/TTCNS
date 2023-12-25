@@ -10,6 +10,7 @@ const Room = React.lazy(() => import('../pages/Room/views/Room'));
 const Staff = React.lazy(() => import('../pages/Staff/views/Staff'));
 const Export = React.lazy(() => import('../pages/Export/views/Export'));
 const Import = React.lazy(() => import('../pages/Import/views/Import'));
+const Report = React.lazy(() => import('../pages/Report/views/Report'));
 
 export const routesAdmin = [
   {
@@ -63,6 +64,12 @@ export const routesAdmin = [
     path: configs.routes.import,
     exact: true,
     element: Import,
+    footer: true,
+  },
+  {
+    path: configs.routes.report,
+    exact: true,
+    element: Report,
     footer: true,
   },
 ];

@@ -22,13 +22,19 @@ const Export = new Schema({
                 type: mongoose.Schema.Types.ObjectId,
                 ref: "Supplies"
             },
-            quantity: {
+            quantityExport: {
+                type: Number
+            },
+            oldQuantity: {
                 type: Number
             },
             key: {
                 type: Number
+            },
+            created: {
+                type: String 
             }
-        }
+        },
     ]
 }, { timestamps: true }
 )

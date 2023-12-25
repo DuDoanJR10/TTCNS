@@ -7,6 +7,7 @@ const routes = {
   staff: 'staff',
   export: 'export',
   import: 'import',
+  report: 'report',
   notPage: '*'
 };
 

@@ -60,6 +60,7 @@ const suppliesController = {
             })
         }
     },
+    // [POST]: /v1/api/supplies/update
     async updateSupplies(req, res) {
         try {
             const { name, description, category, brand, size, color, quantity, id, image } = req.body;
@@ -104,7 +105,7 @@ const suppliesController = {
     // [GET]: /v1/api/supplies/get-all-export
     async getAllExport(req, res) {
         try {
-            const listExport = await Export.find({}).populate('staff');
+            const listExport = await Export.find({}).populate(['staff', 'room', 'supplies.name']);
             return res.status(200).json({
                 success: true,
                 message: "",
@@ -123,10 +124,15 @@ const suppliesController = {
     async exportSupplies(req, res) {
         try {
             const { supplies, name, room, staff } = req.body || {};
-            console.log(supplies, name, room, staff);
-            const newExport = new Export(req.body);
-            supplies.map(async (supply) => {
-                const supplyCurrent = await Supplies.findOne({ _id: supply.name });
+            const exportExist = await Export.findOne({ name });
+            if (exportExist) {
+                return res.status(200).json({
+                    success: false,
+                    message: 'Tên phiếu xuất đã tồn tại!'
+                })
+            }
+            let customSupplies = await Promise.all(supplies.map(async (supply) => {
+                const supplyCurrent = await Supplies.findOne({ _id: supply.name }); 
                 const newQuantity = supplyCurrent?.quantity - supply.quantity;
                 await Supplies.updateOne(
                     { _id: supply.name },
@@ -134,7 +140,14 @@ const suppliesController = {
                         quantity: newQuantity,
                     }
                 );
-            })
+                return {
+                    ...supply,
+                    quantityExport: supply.quantity,
+                    oldQuantity: supplyCurrent?.quantity,
+                    created: new Date()
+                }
+            }));
+            const newExport = new Export({ supplies: customSupplies, name, room, staff });
             await newExport.save();
             return res.status(200).json({
                 success: true,
@@ -152,7 +165,7 @@ const suppliesController = {
     // [GET]: /v1/api/supplies/get-all-import
     async getAllImport(req, res) {
         try {
-            const listImport = await Import.find({});
+            const listImport = await Import.find({}).populate('supplies.name');
             return res.status(200).json({
                 success: true,
                 message: "",
@@ -171,9 +184,14 @@ const suppliesController = {
     async importSupplies(req, res) {
         try {
             const { name, supplies } = req.body || {};
-            console.log(name, supplies);
-            const newImport = new Import(req.body);
-            supplies.map(async (supply) => {
+            const importExist = await Import.findOne({ name });
+            if (importExist) {
+                return res.status(200).json({
+                    success: false,
+                    message: 'Tên phiếu nhập đã tồn tại!'
+                })
+            }
+            let customSupplies = await Promise.all(supplies.map(async (supply) => {
                 const supplyCurrent = await Supplies.findOne({ _id: supply.name });
                 const newQuantity = supplyCurrent?.quantity + supply.quantity;
                 await Supplies.updateOne(
@@ -182,7 +200,14 @@ const suppliesController = {
                         quantity: newQuantity,
                     }
                 );
-            })
+                return {
+                    ...supply,
+                    quantityImport: supply.quantity,
+                    oldQuantity: supplyCurrent?.quantity,
+                    created: new Date()
+                }
+            } ))
+            const newImport = new Import({ name, supplies: customSupplies });
             await newImport.save();
             return res.status(200).json({
                 success: true,
@@ -197,6 +222,29 @@ const suppliesController = {
             })
         }
     },
+    // [POST]: /v1/api/supplies/report
+    async getReport(req, res) {
+        try {
+            const { fromDate, toDate } = req.body;
+            console.log('date: ', fromDate, toDate);
+            const importReport = await Import.find({ createdAt: { $gte: fromDate, $lte: toDate }});
+            const exportReport = await Export.find({ createdAt: { $gte: fromDate, $lte: toDate }});
+            return res.status(200).json({
+                success: true,
+                message: 'Lấy báo cáo thống kê thành công!',
+                exportReport,
+                importReport
+            })
+        } catch (error) {
+            console.log(error);
+            return res.status(500).json({
+                success: false,
+                message: 'Có lỗi xảy ra, vui lòng thử lại!',
+                error
+            })
+        }
+    },
+    // [DELETE]: /v1/api/supplies/:id
     async deleteSupplies(req, res) {
         try {
             const id = req.params.id;
@@ -217,6 +265,7 @@ const suppliesController = {
             })
         }
     },
+    // [POST]: /v1/api/supplies/upload
     async uploadSupplies(req, res) {
         try {
             const path = req.file.path;
